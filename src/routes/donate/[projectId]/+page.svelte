@@ -1,15 +1,16 @@
 <script lang="ts">
-  import { enhance } from '$app/forms';
   import type { PageData } from './$types';
   
-  export let data: PageData;
+  let { data } = $props<{ data: PageData }>();
   
-  let amount = 100;
-  let phoneNumber = '';
-  let isAnonymous = true;
-  let isSubmitting = false;
+  // Form state
+  let amount = $state(1000);
+  let phoneNumber = $state('');
+  let isAnonymous = $state(false);
+  let isSubmitting = $state(false);
   
-  const predefinedAmounts = [100, 500, 1000, 5000];
+  // Predefined amounts
+  const predefinedAmounts = [500, 1000, 2000, 5000];
   
   async function handleSubmit(event: SubmitEvent) {
     isSubmitting = true;
