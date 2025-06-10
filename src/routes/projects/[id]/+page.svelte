@@ -1,18 +1,43 @@
 <script lang="ts">
   import type { PageData } from './$types';
+  import { onMount } from 'svelte';
   
-  export let data: PageData;
+  let { data } = $props<{ data: PageData }>();
   
   // Handle case where targetAmount might be undefined or use target_amount
-  $: targetAmount = data.project.targetAmount || data.project.target_amount || 0;
+  const targetAmount = $derived(data.project.targetAmount || data.project.target_amount || 0);
   
   // Safely calculate progress percentage
-  $: progressPercent = targetAmount > 0 
-    ? Math.min(Math.round((data.totalDonated / targetAmount) * 100), 100)
-    : 0;
+  const progressPercent = $derived(
+    targetAmount > 0 
+      ? Math.min(Math.round((data.totalDonated / targetAmount) * 100), 100)
+      : 0
+  );
 
-  // Ensure image URL is valid
-  $: imageUrl = data.project.imageUrl || data.project.image_url || 'https://via.placeholder.com/800x400?text=No+Image';
+  // Image handling
+  let imageError = $state(false);
+  let imageUrl = $state('');
+  
+  // Update image URL when project changes
+  $effect(() => {
+    const url = data.project.imageUrl || data.project.image_url;
+    imageUrl = url || 'https://via.placeholder.com/800x400?text=No+Image';
+    imageError = false;
+  });
+  
+  function handleImageError() {
+    imageError = true;
+    imageUrl = 'https://via.placeholder.com/800x400?text=Image+Not+Available';
+  }
+  
+  // Preload image to check if it's valid
+  onMount(() => {
+    if (data.project.imageUrl || data.project.image_url) {
+      const img = new Image();
+      img.onerror = handleImageError;
+      img.src = imageUrl;
+    }
+  });
 </script>
 
 <svelte:head>
@@ -23,14 +48,18 @@
   <div class="max-w-3xl mx-auto">
     <a href="/projects" class="text-blue-600 hover:underline mb-4 inline-block">← Back to projects</a>
     
-    <img 
-      src={imageUrl} 
-      alt={data.project.title} 
-      class="w-full h-64 object-cover rounded-lg mb-6" 
-      on:error={(e) => {
-        e.currentTarget.src = 'https://via.placeholder.com/800x400?text=No+Image';
-      }}
-    />
+    {#if imageError}
+      <div class="w-full h-64 bg-gray-200 rounded-lg mb-6 flex items-center justify-center">
+        <span class="text-gray-500">Image not available</span>
+      </div>
+    {:else}
+      <img 
+        src={imageUrl} 
+        alt={data.project.title} 
+        class="w-full h-64 object-cover rounded-lg mb-6" 
+        on:error={handleImageError}
+      />
+    {/if}
     
     <h1 class="text-3xl font-bold mb-4">{data.project.title}</h1>
     
