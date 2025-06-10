@@ -3,28 +3,33 @@
   
   export let project: Project;
   
+  // Handle different property names and ensure we have a valid number
+  $: targetAmount = project.targetAmount || project.target_amount || 0;
+  
   // Calculate progress percentage with additional safety checks
-  $: progressPercent = project && typeof project.targetAmount === 'number' 
-    ? Math.min(Math.round((getTotalDonations() / project.targetAmount) * 100), 100)
+  $: progressPercent = targetAmount > 0 
+    ? Math.min(Math.round((getTotalDonations() / targetAmount) * 100), 100)
     : 0;
   
   function getTotalDonations() {
-    if (!project || typeof project.targetAmount !== 'number') return 0;
+    if (!project || targetAmount <= 0) return 0;
     // This would be replaced with actual data
-    return Math.floor(Math.random() * project.targetAmount * 0.7); // Placeholder for demo
+    return Math.floor(Math.random() * targetAmount * 0.7); // Placeholder for demo
   }
+
+  // Ensure image URL is valid
+  $: imageUrl = project.imageUrl || project.image_url || 'https://via.placeholder.com/400x200?text=No+Image';
 </script>
 
 <div class="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1">
-  {#if project.imageUrl}
-    <img src={project.imageUrl} alt={project.title} class="w-full h-48 object-cover" />
-  {:else}
-    <div class="w-full h-48 bg-gradient-to-r from-blue-400 to-indigo-500 flex items-center justify-center">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-white opacity-75" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-      </svg>
-    </div>
-  {/if}
+  <img 
+    src={imageUrl} 
+    alt={project.title || 'Project image'} 
+    class="w-full h-48 object-cover"
+    on:error={(e) => {
+      e.currentTarget.src = 'https://via.placeholder.com/400x200?text=No+Image';
+    }}
+  />
   
   <div class="p-6">
     <div class="flex justify-between items-start mb-2">
@@ -36,8 +41,8 @@
     
     <div class="mb-6">
       <div class="flex justify-between text-sm mb-1">
-        <span class="font-medium">${getTotalDonations().toLocaleString()}</span>
-        <span class="text-gray-500">${project.targetAmount ? project.targetAmount.toLocaleString() : '0'} goal</span>
+        <span class="font-medium">KES {getTotalDonations().toLocaleString()}</span>
+        <span class="text-gray-500">KES {targetAmount.toLocaleString()} goal</span>
       </div>
       <div class="w-full bg-gray-200 rounded-full h-2.5 mb-1">
         <div class="bg-blue-600 h-2.5 rounded-full" style="width: {progressPercent}%"></div>
