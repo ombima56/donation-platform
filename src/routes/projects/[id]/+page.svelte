@@ -3,10 +3,16 @@
   
   export let data: PageData;
   
-  $: progressPercent = Math.min(
-    Math.round((data.totalDonated / data.project.targetAmount) * 100),
-    100
-  );
+  // Handle case where targetAmount might be undefined or use target_amount
+  $: targetAmount = data.project.targetAmount || data.project.target_amount || 0;
+  
+  // Safely calculate progress percentage
+  $: progressPercent = targetAmount > 0 
+    ? Math.min(Math.round((data.totalDonated / targetAmount) * 100), 100)
+    : 0;
+
+  // Ensure image URL is valid
+  $: imageUrl = data.project.imageUrl || data.project.image_url || 'https://via.placeholder.com/800x400?text=No+Image';
 </script>
 
 <svelte:head>
@@ -15,11 +21,16 @@
 
 <main class="container mx-auto px-4 py-8">
   <div class="max-w-3xl mx-auto">
-    <a href="/" class="text-blue-600 hover:underline mb-4 inline-block">← Back to projects</a>
+    <a href="/projects" class="text-blue-600 hover:underline mb-4 inline-block">← Back to projects</a>
     
-    {#if data.project.imageUrl}
-      <img src={data.project.imageUrl} alt={data.project.title} class="w-full h-64 object-cover rounded-lg mb-6" />
-    {/if}
+    <img 
+      src={imageUrl} 
+      alt={data.project.title} 
+      class="w-full h-64 object-cover rounded-lg mb-6" 
+      on:error={(e) => {
+        e.currentTarget.src = 'https://via.placeholder.com/800x400?text=No+Image';
+      }}
+    />
     
     <h1 class="text-3xl font-bold mb-4">{data.project.title}</h1>
     
@@ -28,8 +39,8 @@
         <div class="bg-blue-600 h-3 rounded-full" style="width: {progressPercent}%"></div>
       </div>
       <div class="flex justify-between mt-2">
-        <span class="font-medium">${data.totalDonated.toLocaleString()} raised</span>
-        <span class="text-gray-600">${data.project.targetAmount.toLocaleString()} goal</span>
+        <span class="font-medium">KES {data.totalDonated.toLocaleString()} raised</span>
+        <span class="text-gray-600">KES {targetAmount.toLocaleString()} goal</span>
       </div>
     </div>
     
