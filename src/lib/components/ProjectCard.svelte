@@ -3,13 +3,13 @@
   
   export let project: Project;
   
-  // Calculate progress percentage
-  $: progressPercent = Math.min(
-    Math.round((getTotalDonations() / project.targetAmount) * 100),
-    100
-  );
+  // Calculate progress percentage with additional safety checks
+  $: progressPercent = project && typeof project.targetAmount === 'number' 
+    ? Math.min(Math.round((getTotalDonations() / project.targetAmount) * 100), 100)
+    : 0;
   
   function getTotalDonations() {
+    if (!project || typeof project.targetAmount !== 'number') return 0;
     // This would be replaced with actual data
     return Math.floor(Math.random() * project.targetAmount * 0.7); // Placeholder for demo
   }
@@ -37,7 +37,7 @@
     <div class="mb-6">
       <div class="flex justify-between text-sm mb-1">
         <span class="font-medium">${getTotalDonations().toLocaleString()}</span>
-        <span class="text-gray-500">${project.targetAmount.toLocaleString()} goal</span>
+        <span class="text-gray-500">${project.targetAmount ? project.targetAmount.toLocaleString() : '0'} goal</span>
       </div>
       <div class="w-full bg-gray-200 rounded-full h-2.5 mb-1">
         <div class="bg-blue-600 h-2.5 rounded-full" style="width: {progressPercent}%"></div>
