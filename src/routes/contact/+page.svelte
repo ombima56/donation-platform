@@ -11,8 +11,6 @@
       return;
     }
     
-    // In a real application, you would send this data to your server
-    // For now, we'll just simulate a successful submission
     try {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 500));
