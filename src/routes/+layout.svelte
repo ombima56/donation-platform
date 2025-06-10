@@ -3,7 +3,7 @@
 	import { page } from '$app/stores';
 
 	let { children } = $props();
-	let isMenuOpen = false;
+	let isMenuOpen = $state(false);
 	
 	function toggleMenu() {
 		isMenuOpen = !isMenuOpen;
@@ -39,7 +39,11 @@
 			</div>
 			
 			<!-- Mobile menu button -->
-			<button class="md:hidden text-gray-600" on:click={toggleMenu}>
+			<button 
+				class="md:hidden text-gray-600" 
+				onclick={toggleMenu}
+				aria-label="Toggle menu"
+			>
 				<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
 				</svg>
@@ -52,18 +56,49 @@
 		<div class="md:hidden bg-white border-t border-gray-200 py-2">
 			<div class="container mx-auto px-4">
 				<nav class="flex flex-col space-y-3 py-3">
-					<a href="/" class="font-medium px-3 py-2 rounded hover:bg-gray-100" on:click={closeMenu}>Home</a>
-					<a href="/about" class="font-medium px-3 py-2 rounded hover:bg-gray-100" on:click={closeMenu}>About</a>
-					<a href="/projects" class="font-medium px-3 py-2 rounded hover:bg-gray-100" on:click={closeMenu}>Projects</a>
-					<a href="/contact" class="font-medium px-3 py-2 rounded hover:bg-gray-100" on:click={closeMenu}>Contact</a>
-					<a href="/admin/login" class="font-medium px-3 py-2 rounded hover:bg-gray-100" on:click={closeMenu}>Admin Login</a>
-					<a href="/projects" class="bg-blue-600 text-white font-medium px-3 py-2 rounded text-center" on:click={closeMenu}>
-						Donate Now
-					</a>
+					<a href="/" class="font-medium px-3 py-2 rounded hover:bg-gray-100" onclick={closeMenu}>Home</a>
+					<a href="/about" class="font-medium px-3 py-2 rounded hover:bg-gray-100" onclick={closeMenu}>About</a>
+					<a href="/projects" class="font-medium px-3 py-2 rounded hover:bg-gray-100" onclick={closeMenu}>Projects</a>
+					<a href="/contact" class="font-medium px-3 py-2 rounded hover:bg-gray-100" onclick={closeMenu}>Contact</a>
+					<a href="/admin/login" class="font-medium px-3 py-2 rounded hover:bg-gray-100" onclick={closeMenu}>Admin Login</a>
+					<a href="/projects" class="bg-blue-600 text-white font-medium px-3 py-2 rounded hover:bg-blue-700" onclick={closeMenu}>Donate Now</a>
 				</nav>
 			</div>
 		</div>
 	{/if}
 </header>
 
-{@render children()}
+<slot />
+
+<footer class="bg-gray-800 text-white py-12">
+	<div class="container mx-auto px-4">
+		<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+			<div>
+				<h3 class="text-xl font-semibold mb-4">DonationPlatform</h3>
+				<p class="text-gray-300">
+					Connecting donors with impactful social projects across Kenya.
+				</p>
+			</div>
+			
+			<div>
+				<h3 class="text-xl font-semibold mb-4">Quick Links</h3>
+				<ul class="space-y-2">
+					<li><a href="/" class="text-gray-300 hover:text-white">Home</a></li>
+					<li><a href="/about" class="text-gray-300 hover:text-white">About Us</a></li>
+					<li><a href="/projects" class="text-gray-300 hover:text-white">Projects</a></li>
+					<li><a href="/contact" class="text-gray-300 hover:text-white">Contact</a></li>
+				</ul>
+			</div>
+			
+			<div>
+				<h3 class="text-xl font-semibold mb-4">Contact Us</h3>
+				<p class="text-gray-300 mb-2">Email: info@donationplatform.com</p>
+				<p class="text-gray-300 mb-2">Phone: +254 700 123 456</p>
+			</div>
+		</div>
+		
+		<div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+			<p>&copy; {new Date().getFullYear()} DonationPlatform. All rights reserved.</p>
+		</div>
+	</div>
+</footer>
