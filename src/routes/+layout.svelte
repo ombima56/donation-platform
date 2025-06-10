@@ -69,36 +69,3 @@
 </header>
 
 <slot />
-
-<footer class="bg-gray-800 text-white py-12">
-	<div class="container mx-auto px-4">
-		<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-			<div>
-				<h3 class="text-xl font-semibold mb-4">DonationPlatform</h3>
-				<p class="text-gray-300">
-					Connecting donors with impactful social projects across Kenya.
-				</p>
-			</div>
-			
-			<div>
-				<h3 class="text-xl font-semibold mb-4">Quick Links</h3>
-				<ul class="space-y-2">
-					<li><a href="/" class="text-gray-300 hover:text-white">Home</a></li>
-					<li><a href="/about" class="text-gray-300 hover:text-white">About Us</a></li>
-					<li><a href="/projects" class="text-gray-300 hover:text-white">Projects</a></li>
-					<li><a href="/contact" class="text-gray-300 hover:text-white">Contact</a></li>
-				</ul>
-			</div>
-			
-			<div>
-				<h3 class="text-xl font-semibold mb-4">Contact Us</h3>
-				<p class="text-gray-300 mb-2">Email: info@donationplatform.com</p>
-				<p class="text-gray-300 mb-2">Phone: +254 700 123 456</p>
-			</div>
-		</div>
-		
-		<div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
-			<p>&copy; {new Date().getFullYear()} DonationPlatform. All rights reserved.</p>
-		</div>
-	</div>
-</footer>
