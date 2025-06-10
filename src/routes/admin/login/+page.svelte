@@ -15,6 +15,9 @@
       <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
         Admin Login
       </h2>
+      <p class="mt-2 text-center text-sm text-gray-600">
+        Sign in to access the admin dashboard
+      </p>
     </div>
     
     <form method="POST" use:enhance={() => {
@@ -51,6 +54,15 @@
           disabled={isSubmitting}>
           {isSubmitting ? 'Signing in...' : 'Sign in'}
         </button>
+      </div>
+      
+      <div class="text-sm text-center mt-4">
+        <p class="text-gray-600">
+          Default credentials: admin@example.com / admin123
+        </p>
+        <p class="text-gray-500 text-xs mt-1">
+          (Make sure to run 'npm run seed-admin' to create this user)
+        </p>
       </div>
     </form>
   </div>
