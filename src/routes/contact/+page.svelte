@@ -46,7 +46,7 @@
           <p>Thank you for your message! We'll get back to you soon.</p>
         </div>
       {:else}
-        <form onsubmit|preventDefault={handleSubmit} class="space-y-4">
+        <form on:submit|preventDefault={handleSubmit} class="space-y-4">
           {#if error}
             <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
               <p>{error}</p>
