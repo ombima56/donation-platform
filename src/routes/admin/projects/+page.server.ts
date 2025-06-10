@@ -19,8 +19,11 @@ export const actions: Actions = {
     const imageUrl = formData.get('imageUrl')?.toString();
     const targetAmount = Number(formData.get('targetAmount'));
     
-    if (!title || !description || !targetAmount) {
-      return { success: false, message: 'Missing required fields' };
+    if (!title || !description || isNaN(targetAmount) || targetAmount <= 0) {
+      return { 
+        success: false, 
+        message: 'Please provide a valid title, description, and target amount' 
+      };
     }
     
     try {
@@ -29,16 +32,17 @@ export const actions: Actions = {
       
       await db.run(
         `INSERT INTO projects (
-          id, title, description, image_url, target_amount, created_at, is_active
+          id, title, description, image_url, target_amount, 
+          is_active, created_at
         ) VALUES (?, ?, ?, ?, ?, ?, ?)`,
         [
           id,
           title,
           description,
-          imageUrl || null,
+          imageUrl || null, // Store null if no image URL is provided
           targetAmount,
-          new Date().toISOString(),
-          1 // Active by default
+          1, // Active by default
+          new Date().toISOString()
         ]
       );
       
