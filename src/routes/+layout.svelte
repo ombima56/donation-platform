@@ -68,4 +68,4 @@
 	{/if}
 </header>
 
-<slot />
+{@render children()}
