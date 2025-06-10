@@ -7,17 +7,28 @@
   // Handle different property names and ensure we have a valid number
   const targetAmount = $derived(project.targetAmount || project.target_amount || 0);
   
+  // State for total donations
+  let totalDonations = $state(0);
+  
   // Calculate progress percentage with additional safety checks
   const progressPercent = $derived(
     targetAmount > 0 
-      ? Math.min(Math.round((getTotalDonations() / targetAmount) * 100), 100)
+      ? Math.min(Math.round((totalDonations / targetAmount) * 100), 100)
       : 0
   );
   
-  function getTotalDonations() {
-    if (!project || targetAmount <= 0) return 0;
-    // This would be replaced with actual data
-    return Math.floor(Math.random() * targetAmount * 0.7); // Placeholder for demo
+  // Fetch the actual donations for this project
+  async function fetchDonations() {
+    try {
+      const response = await fetch(`/api/projects/${project.id}/donations`);
+      if (response.ok) {
+        const data = await response.json();
+        totalDonations = data.totalAmount || 0;
+      }
+    } catch (error) {
+      console.error('Error fetching donations:', error);
+      totalDonations = 0;
+    }
   }
 
   // Image handling
@@ -36,13 +47,16 @@
     imageUrl = 'https://via.placeholder.com/400x200?text=Image+Not+Available';
   }
   
-  // Preload image to check if it's valid
+  // Preload image and fetch donations when component mounts
   onMount(() => {
     if (project.imageUrl || project.image_url) {
       const img = new Image();
       img.onerror = handleImageError;
       img.src = imageUrl;
     }
+    
+    // Fetch actual donations
+    fetchDonations();
   });
 </script>
 
@@ -70,13 +84,13 @@
     
     <div class="mb-6">
       <div class="flex justify-between text-sm mb-1">
-        <span class="font-medium">KES {getTotalDonations().toLocaleString()}</span>
+        <span class="font-medium">KES {totalDonations.toLocaleString()}</span>
         <span class="text-gray-500">KES {targetAmount.toLocaleString()} goal</span>
       </div>
       <div class="w-full bg-gray-200 rounded-full h-2.5 mb-1">
         <div class="bg-blue-600 h-2.5 rounded-full" style="width: {progressPercent}%"></div>
       </div>
-      <div class="text-xs text-gray-500">{progressPercent}% funded</div>
+      <div class="text-xs text-gray-500">{progressPercent}%</div>
     </div>
     
     <div class="flex space-x-3">
