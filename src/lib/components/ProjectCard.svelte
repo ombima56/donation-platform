@@ -1,15 +1,18 @@
 <script lang="ts">
   import type { Project } from '$lib/types';
+  import { onMount } from 'svelte';
   
-  export let project: Project;
+  let { project } = $props<{ project: Project }>();
   
   // Handle different property names and ensure we have a valid number
-  $: targetAmount = project.targetAmount || project.target_amount || 0;
+  const targetAmount = $derived(project.targetAmount || project.target_amount || 0);
   
   // Calculate progress percentage with additional safety checks
-  $: progressPercent = targetAmount > 0 
-    ? Math.min(Math.round((getTotalDonations() / targetAmount) * 100), 100)
-    : 0;
+  const progressPercent = $derived(
+    targetAmount > 0 
+      ? Math.min(Math.round((getTotalDonations() / targetAmount) * 100), 100)
+      : 0
+  );
   
   function getTotalDonations() {
     if (!project || targetAmount <= 0) return 0;
@@ -17,19 +20,45 @@
     return Math.floor(Math.random() * targetAmount * 0.7); // Placeholder for demo
   }
 
-  // Ensure image URL is valid
-  $: imageUrl = project.imageUrl || project.image_url || 'https://via.placeholder.com/400x200?text=No+Image';
+  // Image handling
+  let imageError = $state(false);
+  let imageUrl = $state('');
+  
+  // Update image URL when project changes
+  $effect(() => {
+    const url = project.imageUrl || project.image_url;
+    imageUrl = url || 'https://via.placeholder.com/400x200?text=No+Image';
+    imageError = false;
+  });
+  
+  function handleImageError() {
+    imageError = true;
+    imageUrl = 'https://via.placeholder.com/400x200?text=Image+Not+Available';
+  }
+  
+  // Preload image to check if it's valid
+  onMount(() => {
+    if (project.imageUrl || project.image_url) {
+      const img = new Image();
+      img.onerror = handleImageError;
+      img.src = imageUrl;
+    }
+  });
 </script>
 
 <div class="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1">
-  <img 
-    src={imageUrl} 
-    alt={project.title || 'Project image'} 
-    class="w-full h-48 object-cover"
-    on:error={(e) => {
-      e.currentTarget.src = 'https://via.placeholder.com/400x200?text=No+Image';
-    }}
-  />
+  {#if imageError}
+    <div class="w-full h-48 bg-gray-200 flex items-center justify-center">
+      <span class="text-gray-500 text-sm">Image not available</span>
+    </div>
+  {:else}
+    <img 
+      src={imageUrl} 
+      alt={project.title || 'Project image'} 
+      class="w-full h-48 object-cover"
+      on:error={handleImageError}
+    />
+  {/if}
   
   <div class="p-6">
     <div class="flex justify-between items-start mb-2">
