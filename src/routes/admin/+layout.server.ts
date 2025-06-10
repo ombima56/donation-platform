@@ -4,7 +4,9 @@ import type { LayoutServerLoad } from './$types';
 export const load: LayoutServerLoad = async ({ locals, url }) => {
   // Skip auth check for login page
   if (url.pathname === '/admin/login') {
-    return {};
+    return {
+      user: null
+    };
   }
   
   // Check if user is authenticated
