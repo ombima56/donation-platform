@@ -1,6 +1,7 @@
 <script lang="ts">
 	import '../app.css';
 	import { page } from '$app/stores';
+	import Footer from '$lib/components/Footer.svelte';
 
 	let { children } = $props();
 	let isMenuOpen = $state(false);
@@ -69,3 +70,6 @@
 </header>
 
 {@render children()}
+
+<!-- Include the Footer component on all pages -->
+<Footer />
