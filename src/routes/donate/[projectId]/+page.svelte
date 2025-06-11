@@ -13,6 +13,7 @@
   const predefinedAmounts = [500, 1000, 2000, 5000];
   
   async function handleSubmit(event: SubmitEvent) {
+    event.preventDefault();
     isSubmitting = true;
     
     try {
@@ -38,7 +39,11 @@
         throw new Error(result.error || 'Payment failed');
       }
     } catch (error) {
+      if (error instanceof Error) {
       alert(`Payment error: ${error.message}`);
+      } else {
+        alert('An unknown error occurred.');
+      }
       isSubmitting = false;
     }
   }
@@ -52,15 +57,15 @@
   <div class="max-w-md mx-auto bg-white rounded-lg shadow-md p-6">
     <h1 class="text-2xl font-bold mb-6">Donate to {data.project.title}</h1>
     
-    <form on:submit|preventDefault={handleSubmit}>
+    <form onsubmit={handleSubmit}>
       <div class="mb-6">
-        <label class="block text-gray-700 mb-2">Select Amount (KES)</label>
+        <label for="amount" class="block text-gray-700 mb-2">Select Amount (KES)</label>
         <div class="grid grid-cols-2 gap-2 mb-2">
           {#each predefinedAmounts as presetAmount}
             <button 
               type="button"
               class="py-2 px-4 border rounded-md {amount === presetAmount ? 'bg-blue-100 border-blue-500' : 'border-gray-300'}"
-              on:click={() => amount = presetAmount}
+              onclick={() => amount = presetAmount}
             >
               KES {presetAmount}
             </button>
@@ -76,8 +81,9 @@
       </div>
       
       <div class="mb-6">
-        <label class="block text-gray-700 mb-2">M-Pesa Phone Number</label>
+        <label for="phone" class="block text-gray-700 mb-2">M-Pesa Phone Number</label>
         <input 
+          id="phone"
           type="tel"
           bind:value={phoneNumber}
           placeholder="e.g. 254712345678"
