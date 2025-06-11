@@ -57,7 +57,7 @@
         src={imageUrl} 
         alt={data.project.title} 
         class="w-full h-64 object-cover rounded-lg mb-6" 
-        on:error={handleImageError}
+        onerror={handleImageError}
       />
     {/if}
     
