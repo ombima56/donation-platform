@@ -5,7 +5,9 @@
   let submitted = $state(false);
   let error = $state('');
 
-  async function handleSubmit() {
+  async function handleSubmit(event: SubmitEvent) {
+    event.preventDefault();
+    
     if (!name || !email || !message) {
       error = 'Please fill out all fields';
       return;
@@ -46,7 +48,7 @@
           <p>Thank you for your message! We'll get back to you soon.</p>
         </div>
       {:else}
-        <form on:submit|preventDefault={handleSubmit} class="space-y-4">
+        <form onsubmit={handleSubmit} class="space-y-4">
           {#if error}
             <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
               <p>{error}</p>

@@ -70,7 +70,7 @@
       src={imageUrl} 
       alt={project.title || 'Project image'} 
       class="w-full h-48 object-cover"
-      on:error={handleImageError}
+      onerror={handleImageError}
     />
   {/if}
   
